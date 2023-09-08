@@ -354,7 +354,15 @@ defmodule AwsExRay do
         {:ok, subsegment}
 
       {:error, :not_found} ->
-        {:error, :out_of_xray}
+        case Process.get(:"$callers") do
+          [caller_pid | _] when is_pid(caller_pid) and tracing_pid == nil ->
+            # If the tracing pid was not explicitly specified, and the
+            # current process is not tracing but it was started as a
+            # Task from a process that is tracing, continue that trace.
+            start_subsegment(name, Keyword.put(opts, :tracing_pid, caller_pid))
+          _ ->
+            {:error, :out_of_xray}
+        end
 
     end
   end
