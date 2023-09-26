@@ -28,6 +28,7 @@
       |> embed_parent(seg)
       |> embed_http(seg)
       |> embed_error(seg)
+      |> embed_aws(seg)
     end
 
     defp embed_error(m, seg) do
@@ -89,6 +90,15 @@
         Map.put(m, :end_time, seg.end_time)
       else
         Map.put(m, :in_progress, true)
+      end
+    end
+
+    defp embed_aws(m, seg) do
+      case seg.aws do
+        nil ->
+          m
+        aws_metadata when is_map(aws_metadata) ->
+          Map.put(m, :aws, aws_metadata)
       end
     end
 

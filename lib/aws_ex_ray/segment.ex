@@ -22,7 +22,8 @@
       annotation: map,
       metadata:   map,
       error:      map | nil,
-      http:       map
+      http:       map,
+      aws:        map | nil
     }
 
     defstruct id:         "",
@@ -34,7 +35,8 @@
               error:      %{},
               annotation: %{},
               metadata:   %{},
-              http: %{}
+              http: %{},
+              aws: nil
 
     @spec new(trace :: Trace.t, name :: String.t) :: t
     def new(trace, name) do
@@ -65,7 +67,8 @@
         http: %{
           request: nil,
           response: nil
-        }
+        },
+        aws: Application.get_env(:aws_ex_ray, :aws_metadata, nil)
       }
     end
 
