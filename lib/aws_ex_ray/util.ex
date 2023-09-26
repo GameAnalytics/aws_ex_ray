@@ -6,14 +6,13 @@
 
     @spec now() :: float
     def now() do
-      ms = DateTime.utc_now |> DateTime.to_unix(:microsecond)
+      ms = System.os_time(:microsecond)
       ms / 1_000_000
     end
 
     @spec generate_trace_id() :: String.t
     def generate_trace_id() do
-      t = DateTime.utc_now
-          |> DateTime.to_unix(:second)
+      t = System.os_time(:second)
           |> Integer.to_string(16)
           |> String.downcase()
       "1-#{t}-#{SecureRandom.hex(12)}"
