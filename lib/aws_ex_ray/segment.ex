@@ -94,6 +94,17 @@
       Map.put(seg, :annotation, annotation)
     end
 
+    @spec add_metadata(
+      seg         :: t,
+      metadata :: map
+    ) :: t
+    def add_metadata(seg, metadata) do
+      metadata
+      |> Enum.reduce(seg, fn {key, value}, seg ->
+        Map.put(seg, :metadata, Map.put(seg.metadata, key, value))
+      end)
+    end
+
     @spec set_http_request(seg :: t, req :: HTTPRequest.t) :: t
     def set_http_request(seg, req) do
       put_in(seg.http.request, req)

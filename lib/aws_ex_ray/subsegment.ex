@@ -66,6 +66,14 @@
       put_in(seg.segment.annotation, annotation)
     end
 
+    @spec add_metadata(
+      seg         :: t,
+      metadata :: map
+    ) :: t
+    def add_metadata(seg, metadata) do
+      put_in(seg.segment, Segment.add_metadata(seg.segment, metadata))
+    end
+
     @spec set_aws(seg :: t, params :: map) :: t
     def set_aws(seg, params) do
       Map.put(seg, :aws, params)
