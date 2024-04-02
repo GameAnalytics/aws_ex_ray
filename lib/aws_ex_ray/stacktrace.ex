@@ -17,11 +17,15 @@
 
     end
 
-    defp to_map({module, fun, args, [file: path, line: line]}) do
+    def to_map({module, fun, args, [file: path, line: line]}) do
+      arity = cond do
+        is_integer(args) -> args
+        is_list(args) -> length(args)
+      end
       %{
-        path: path,
+        path: "#{path}",
         line: line,
-        label: "#{module}.#{fun_name(fun)}/#{args}"
+        label: "#{module}.#{fun_name(fun)}/#{arity}"
       }
     end
 
