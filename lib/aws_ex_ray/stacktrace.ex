@@ -17,16 +17,26 @@
 
     end
 
-    def to_map({module, fun, args, [file: path, line: line]}) do
+    def to_map({module, fun, args, extra_info}) do
       arity = cond do
         is_integer(args) -> args
         is_list(args) -> length(args)
       end
-      %{
-        path: "#{path}",
-        line: line,
-        label: "#{module}.#{fun_name(fun)}/#{arity}"
-      }
+      label = "#{module}.#{fun_name(fun)}/#{arity}"
+      Map.new(
+        [label: label] ++
+          case Keyword.fetch(extra_info, :file) do
+            {:ok, path} ->
+              [path: "#{path}"]
+            :error ->
+              []
+          end ++
+          case Keyword.fetch(extra_info, :line) do
+            {:ok, line} ->
+              [line: line]
+            :error ->
+              []
+          end)
     end
 
     defp fun_name(":" <> fun), do: fun
