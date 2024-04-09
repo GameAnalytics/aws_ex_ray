@@ -23,7 +23,8 @@
       metadata:   map,
       error:      map | nil,
       http:       map,
-      aws:        map | nil
+      aws:        map | nil,
+      user:       String.t | nil
     }
 
     defstruct id:         "",
@@ -36,7 +37,8 @@
               annotation: %{},
               metadata:   %{},
               http: %{},
-              aws: nil
+              aws: nil,
+              user: nil
 
     @spec new(trace :: Trace.t, name :: String.t) :: t
     def new(trace, name) do
@@ -103,6 +105,11 @@
       |> Enum.reduce(seg, fn {key, value}, seg ->
         Map.put(seg, :metadata, Map.put(seg.metadata, key, value))
       end)
+    end
+
+    @spec set_user(seg :: t, user :: String.t) :: t
+    def set_user(seg, user) do
+      Map.put(seg, :user, user)
     end
 
     @spec set_http_request(seg :: t, req :: HTTPRequest.t) :: t

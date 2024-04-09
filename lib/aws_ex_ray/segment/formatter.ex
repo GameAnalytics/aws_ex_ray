@@ -29,6 +29,7 @@
       |> embed_http(seg)
       |> embed_error(seg)
       |> embed_aws(seg)
+      |> embed_user(seg)
     end
 
     defp embed_error(m, seg) do
@@ -104,6 +105,15 @@
           else
             m
           end
+      end
+    end
+
+    defp embed_user(m, seg) do
+      case seg.user do
+        nil ->
+          m
+        user ->
+          Map.put(m, :user, user)
       end
     end
 
