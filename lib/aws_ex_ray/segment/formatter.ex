@@ -29,6 +29,7 @@
       |> embed_http(seg)
       |> embed_error(seg)
       |> embed_aws(seg)
+      |> embed_user(seg)
     end
 
     defp embed_error(m, seg) do
@@ -98,7 +99,21 @@
         nil ->
           m
         aws_metadata when is_map(aws_metadata) ->
-          Map.put(m, :aws, aws_metadata)
+          m = Map.put(m, :aws, aws_metadata)
+          if Map.has_key?(aws_metadata, "ec2") do
+            Map.put(m, :origin, "AWS::EC2::Instance")
+          else
+            m
+          end
+      end
+    end
+
+    defp embed_user(m, seg) do
+      case seg.user do
+        nil ->
+          m
+        user ->
+          Map.put(m, :user, user)
       end
     end
 
