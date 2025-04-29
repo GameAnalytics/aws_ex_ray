@@ -22,6 +22,10 @@ defmodule AwsExRay.AwsMetadata do
     case result do
       %{"ec2" => _} ->
         Application.put_env(:aws_ex_ray, :aws_metadata, result)
+      {{%RuntimeError{message: error_message = "Instance Meta Error" <> _}, _}, _} ->
+        # Failed to reach the instance metadata endpoint.
+        # Most likely we're not running on an EC2 instance.
+        :ok
       _ ->
         Logger.debug("Error during instance identity request: #{Exception.format_exit(result)}")
     end
@@ -29,7 +33,7 @@ defmodule AwsExRay.AwsMetadata do
   end
 
   def request_aws_metadata() do
-    config = ExAws.Config.new(:ec2, require_imds_v2: true)
+    config = ExAws.Config.new(:ec2, require_imds_v2: true, access_key_id: "", secret_access_key: "", security_token: "")
     result = ExAws.InstanceMeta.request(config, "http://169.254.169.254/latest/dynamic/instance-identity/document")
     map = Jason.decode!(result)
     :erlang.exit(%{"ec2" => %{
