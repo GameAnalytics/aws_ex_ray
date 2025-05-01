@@ -56,7 +56,8 @@ defmodule AwsExRay.Config do
   def daemon_address() do
 
     address = get(:daemon_address,
-                  @default_daemon_address)
+      System.get_env("_AWS_XRAY_DAEMON_ADDRESS",
+        @default_daemon_address))
 
     charlist_address = address |> String.to_charlist()
 
@@ -74,8 +75,17 @@ defmodule AwsExRay.Config do
 
   @spec daemon_port() :: non_neg_integer
   def daemon_port() do
-    get(:daemon_port,
-        @default_daemon_port)
+    case get(:daemon_port, nil) do
+      nil ->
+        case System.get_env("_AWS_XRAY_DAEMON_PORT") do
+          port when is_binary(port) ->
+            String.to_integer(port)
+          nil ->
+            @default_daemon_port
+        end
+      port ->
+        port
+    end
   end
 
   @spec default_annotation() :: map

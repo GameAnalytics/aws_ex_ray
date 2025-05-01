@@ -410,8 +410,8 @@ defmodule AwsExRay do
     name        :: String.t,
     annotations :: map,
     opts        :: keyword,
-    func        :: fun
-  ) :: :ok
+    func        :: (String.t -> ret)
+  ) :: ret when ret: term
   def subsegment(name, annotations, opts, func) do
 
     subsegment_state = start_subsegment(name, opts)
