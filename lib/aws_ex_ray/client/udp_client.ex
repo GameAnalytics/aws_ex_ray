@@ -61,9 +61,10 @@ defmodule AwsExRay.Client.UDPClient do
     case send_data(data, state) do
       :ok ->
         {:reply, :ok, state}
-      _other ->
-        Logger.error "<AwsExRay.UDPClient> failed to send data"
-        {:stop, :normal, state}
+      {:error, other} ->
+        Logger.error("<AwsExRay.UDPClient> failed to send data: #{inspect(other)}")
+        # Let's return an :ok reply here, rather than make the caller crash
+        {:stop, :normal, :ok, state}
     end
   end
 
