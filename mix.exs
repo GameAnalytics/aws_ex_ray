@@ -29,7 +29,7 @@ defmodule AwsExRay.MixProject do
   defp deps do
     [
       {:ex_aws, "~> 2.1"},
-      {:hackney, "~> 1.9"},
+      {:hackney, "~> 1.9 or ~> 4.0"},
       {:mox, "~> 0.3.2", only: :test},
       {:credo, "~> 0.3", only: :dev, runtime: false},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
