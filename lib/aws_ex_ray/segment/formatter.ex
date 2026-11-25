@@ -100,13 +100,17 @@
           m
         aws_metadata when is_map(aws_metadata) ->
           m = Map.put(m, :aws, aws_metadata)
-          if Map.has_key?(aws_metadata, "ec2") do
-            Map.put(m, :origin, "AWS::EC2::Instance")
-          else
-            m
+          case origin(aws_metadata) do
+            nil    -> m
+            origin -> Map.put(m, :origin, origin)
           end
       end
     end
+
+    defp origin(%{"ecs" => %{"launch_type" => "fargate"}}), do: "AWS::ECS::Fargate"
+    defp origin(%{"ecs" => _}), do: "AWS::ECS::Container"
+    defp origin(%{"ec2" => _}), do: "AWS::EC2::Instance"
+    defp origin(_), do: nil
 
     defp embed_user(m, seg) do
       case seg.user do
